@@ -82,7 +82,7 @@ class Shape {
  * 例子类
  */
 class Particle {
-  constarctor(x, y, type) {
+  constructor(x, y, type) {
     this.radius = 1.1 // 圆半径
     this.futurRadius = utils.randomInt(this.radius, this.radius + 3)
 

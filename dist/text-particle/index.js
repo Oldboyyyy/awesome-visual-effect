@@ -90,32 +90,29 @@ var Shape = function () {
 
 
 var Particle = function () {
-  function Particle() {
+  function Particle(x, y, type) {
     _classCallCheck(this, Particle);
+
+    this.radius = 1.1; // 圆半径
+    this.futurRadius = utils.randomInt(this.radius, this.radius + 3);
+
+    this.rebond = utils.randomInt(1, 5);
+    this.x = x;
+    this.y = y;
+
+    this.dying = false;
+
+    this.base = [x, y];
+
+    this.vx = 0;
+    this.vy = 0;
+    this.type = type;
+    this.friction = 0.99;
+    this.gravity = gravity; // 重力
+    this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
   }
 
   _createClass(Particle, [{
-    key: 'constarctor',
-    value: function constarctor(x, y, type) {
-      this.radius = 1.1; // 圆半径
-      this.futurRadius = utils.randomInt(this.radius, this.radius + 3);
-
-      this.rebond = utils.randomInt(1, 5);
-      this.x = x;
-      this.y = y;
-
-      this.dying = false;
-
-      this.base = [x, y];
-
-      this.vx = 0;
-      this.vy = 0;
-      this.type = type;
-      this.friction = 0.99;
-      this.gravity = gravity; // 重力
-      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
-    }
-  }, {
     key: 'init',
     value: function init() {
       ctx.beginPath();
