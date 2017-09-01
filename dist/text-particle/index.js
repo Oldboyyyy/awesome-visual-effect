@@ -188,12 +188,11 @@ var Particle = function () {
 }();
 
 var message = new Shape(w / 2, h / 2 + 50, fieldvalue);
-message.getValue();
 
 function update() {
   setTimeout(function () {
     ctx.clearRect(0, 0, w, h);
-
+    message.getValue();
     message.placement.forEach(function (item) {
       item.update();
     });

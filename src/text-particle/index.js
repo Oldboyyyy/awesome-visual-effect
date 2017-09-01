@@ -169,12 +169,12 @@ class Particle {
 }
 
 let message = new Shape(w/2, h/2 + 50, fieldvalue)
-message.getValue()
+
 
 function update() {
   setTimeout(() => {
     ctx.clearRect(0, 0, w, h)
-
+    message.getValue()
     message.placement.forEach((item) => {
       item.update()
     })
