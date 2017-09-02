@@ -22,20 +22,21 @@ var utils = {
 
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
-var w = canvas.width = window.innerWidth;
-var h = canvas.height = window.innerHeight;
+var w = canvas.width = window.innerWidth; // 画布宽度
+var h = canvas.height = window.innerHeight; // 画布高度
 
-var gridX = 5;
-var gridY = 5;
+var gridX = 5; // 生粒子的横向间隔
+var gridY = 5; // 生成粒子的纵向间隔
 
+// 颜色列表
 var COLORS = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
 
-var fieldvalue = 'yccc';
-var gravity = 0;
-var duration = 0.4;
-var speed = 0.1;
-var radius = 2;
-var resolution = 5;
+var fieldvalue = '狗子'; // 文本
+var gravity = -0.3; // 重力系数用于改变粒子的纵坐标位置，让粒子向上或者向下偏移 取值：-1~1
+var duration = 0.4; // 用于改变粒子生命周期长度的系数 0.1~0.99
+var speed = 0.1; // 横向的一个速度，用于改变粒子的横坐标 0~5
+var radius = 2; // 粒子的半径
+// let resolution = 5 
 var FPS = 100;
 
 /**
@@ -48,7 +49,7 @@ var Shape = function () {
 
     this.x = x;
     this.y = y;
-    this.size = 120;
+    this.size = 220;
 
     this.text = texte;
     this.placement = [];
@@ -72,7 +73,6 @@ var Shape = function () {
       for (var y = 0; y < h; y += gridY) {
         for (var x = 0; x < w; x += gridX) {
           if (buffer32[y * w + x]) {
-            console.log(x, y);
             this.placement.push(new Particle(x, y));
           }
         }
@@ -93,45 +93,29 @@ var Particle = function () {
   function Particle(x, y, type) {
     _classCallCheck(this, Particle);
 
-    this.radius = 1.1; // 圆半径
-    this.futurRadius = utils.randomInt(this.radius, this.radius + 3);
+    this.radius = 2; // 圆半径
+    this.futurRadius = utils.randomInt(radius, radius + 3);
 
-    this.rebond = utils.randomInt(1, 5);
-    this.x = x;
+    // this.rebond = utils.randomInt(1, 5)
+    this.x = x; // 圆心坐标
     this.y = y;
 
     this.dying = false;
 
     this.base = [x, y];
 
-    this.vx = 0;
-    this.vy = 0;
-    this.type = type;
-    this.friction = 0.99;
+    this.vx = 0; // X轴偏移量
+    this.vy = 0; // y轴偏移量
+    // this.type = type
+    this.friction = 0.99; // 摩擦系数
     this.gravity = gravity; // 重力
-    this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    this.color = COLORS[Math.floor(Math.random() * COLORS.length)]; // 随机选一种颜色
+
+    this.setSpeed(utils.randomInt(0.1, 0.5));
+    this.setHeading(utils.randomInt(utils.degreesToRads(0), utils.degreesToRads(360)));
   }
 
   _createClass(Particle, [{
-    key: 'init',
-    value: function init() {
-      ctx.beginPath();
-      ctx.fillStyle = this.color;
-      ctx.arc(this.x, this.y, this.radius, Math.PI * 2, false);
-      ctx.fill();
-      ctx.closePath();
-
-      if (this.y < 0 || this.radius < 1) {
-        this.x = this.base[0];
-        this.dying = false;
-        this.y = this.base[1];
-        this.radius = 1.1;
-        this.setSpeed(speed);
-        this.futurRadius = utils.randomInt(this.radius, this.radius + 3);
-        this.setHeading(utils.randomInt(utils.degreesToRads(0), utils.degreesToRads(360)));
-      }
-    }
-  }, {
     key: 'getSpeed',
     value: function getSpeed() {
       return Math.sqrt(this.vx * this.vx + this.vy * this.vy);
@@ -163,13 +147,13 @@ var Particle = function () {
     }
   }, {
     key: 'update',
-    value: function update(heading) {
+    value: function update() {
       this.x += this.vx;
       this.y += this.vy;
       this.vy += gravity;
 
-      this.vx *= this.fariction;
-      this.vy *= this.fariction;
+      this.vx *= this.friction;
+      this.vy *= this.friction;
 
       if (this.radius < this.futurRadius && this.dying === false) {
         this.radius += duration;
@@ -180,7 +164,22 @@ var Particle = function () {
       if (this.dying === true) {
         this.radius -= duration;
       }
-      this.init();
+
+      ctx.beginPath();
+      ctx.fillStyle = this.color;
+      ctx.arc(this.x, this.y, this.radius, Math.PI * 2, false);
+      ctx.fill();
+      ctx.closePath();
+
+      if (this.y < 0 || this.radius < 1) {
+        this.x = this.base[0];
+        this.dying = false;
+        this.y = this.base[1];
+        this.radius = 1.1;
+        this.setSpeed(speed);
+        this.futurRadius = utils.randomInt(radius, radius + 3);
+        this.setHeading(utils.randomInt(utils.degreesToRads(0), utils.degreesToRads(360)));
+      }
     }
   }]);
 
@@ -188,11 +187,11 @@ var Particle = function () {
 }();
 
 var message = new Shape(w / 2, h / 2 + 50, fieldvalue);
+message.getValue();
 
 function update() {
   setTimeout(function () {
     ctx.clearRect(0, 0, w, h);
-    message.getValue();
     message.placement.forEach(function (item) {
       item.update();
     });
